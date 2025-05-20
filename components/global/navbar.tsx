@@ -48,7 +48,7 @@ const Navbar = () => {
   // Handle scroll event to change navbar appearance
   useEffect(() => {
     const handleScroll = () => {
-      if (window.scrollY > 50) {
+      if (window.scrollY > 100) {
         setScrolled(true);
       } else {
         setScrolled(false);
@@ -159,7 +159,7 @@ const Navbar = () => {
         <div
           className={`${
             scrolled ? "backdrop-blur-lg bg-white/10" : ""
-          } border-b border-white/20 transition-all duration-300`}
+          }  transition-all duration-300`}
         >
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex items-center justify-between h-16">
@@ -186,7 +186,9 @@ const Navbar = () => {
                     <span
                       className={`${
                         direction === "rtl" ? "mr-2" : "ml-2"
-                      } font-bold text-lg text-black hidden sm:block`}
+                      } font-bold text-lg  ${
+                        scrolled ? "text-black" : "text-white"
+                      }   hidden sm:block`}
                     >
                       {t("brand.name")}
                     </span>
@@ -209,7 +211,9 @@ const Navbar = () => {
                       >
                         <Link
                           href={`#${item.id}`}
-                          className={`px-4 py-2 rounded-lg text-sm font-medium flex items-center transition-colors relative z-10 ${
+                          className={`px-4 py-2 rounded-lg text-sm ${
+                            scrolled ? "text-black" : "text-white"
+                          } font-medium flex items-center transition-colors relative z-10 ${
                             activeSection === item.id
                               ? "text-primary"
                               : "text-dark/80 hover:text-primary"
