@@ -95,6 +95,7 @@ const Navbar = () => {
   }, [isOpen, langMenuOpen]);
 
   // Prevent body scroll when mobile menu is open
+
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = "hidden";
@@ -157,7 +158,7 @@ const Navbar = () => {
       >
         <div
           className={`${
-            scrolled ? "backdrop-blur-md" : "backdrop-blur-sm bg-white/10"
+            scrolled ? "backdrop-blur-lg bg-white/10" : ""
           } border-b border-white/20 transition-all duration-300`}
         >
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -551,7 +552,7 @@ const Navbar = () => {
                 {/* Mobile menu button */}
                 <div className="md:hidden">
                   <motion.button
-                    className="menu-button inline-flex items-center justify-center p-2.5 rounded-full bg-white/80 backdrop-blur-md text-black hover:bg-primary hover:text-white focus:outline-none transition-colors border border-primary/20 shadow-sm"
+                    className="menu-button inline-flex items-center justify-center p-2.5 rounded-full bg-white/80 backdrop-blur-md text-black hover:bg-primary hover:text-white focus:outline-none transition-colors shadow-sm"
                     onClick={() => setIsOpen(!isOpen)}
                     whileHover={{
                       scale: 1.05,
