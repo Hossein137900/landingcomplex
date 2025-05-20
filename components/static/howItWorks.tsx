@@ -19,28 +19,14 @@ const HowItWorks = () => {
   const { t, isRTL } = useLanguage();
   const sectionRef = useRef(null);
   const isInView = useInView(sectionRef, { once: false, amount: 0.2 });
-  const [activeStep, setActiveStep] = useState<null | number>(0);
+  const [activeStep, setActiveStep] = useState<null | number>(null);
   const [videoPlaying, setVideoPlaying] = useState(false);
-  const [windowSize, setWindowSize] = useState({ width: 0, height: 0 });
   const [isMounted, setIsMounted] = useState(false);
 
   // Handle window dimensions safely with useEffect
   useEffect(() => {
     setIsMounted(true);
-    setWindowSize({
-      width: window.innerWidth,
-      height: window.innerHeight,
-    });
-
-    const handleResize = () => {
-      setWindowSize({
-        width: window.innerWidth,
-        height: window.innerHeight,
-      });
-    };
-
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
+    return () => setIsMounted(false);
   }, []);
 
   // Get translated steps
@@ -53,6 +39,7 @@ const HowItWorks = () => {
       lightColor: "from-blue-100 to-indigo-200",
       darkColor: "from-blue-600 to-indigo-700",
       number: isRTL ? "١" : "1",
+      accentColor: "#6366F1",
     },
     {
       icon: <FaRegEdit />,
@@ -62,6 +49,7 @@ const HowItWorks = () => {
       lightColor: "from-purple-100 to-indigo-200",
       darkColor: "from-purple-600 to-indigo-700",
       number: isRTL ? "٢" : "2",
+      accentColor: "#8B5CF6",
     },
     {
       icon: <FaRegCheckCircle />,
@@ -71,6 +59,7 @@ const HowItWorks = () => {
       lightColor: "from-indigo-100 to-purple-200",
       darkColor: "from-indigo-600 to-purple-700",
       number: isRTL ? "٣" : "3",
+      accentColor: "#A855F7",
     },
   ];
 
@@ -80,7 +69,7 @@ const HowItWorks = () => {
     offset: ["start end", "end start"],
   });
 
-  const y = useTransform(scrollYProgress, [0, 1], [100, -100]);
+  const y = useTransform(scrollYProgress, [0, 1], [50, -50]);
   const opacity = useTransform(scrollYProgress, [0, 0.2, 0.8, 1], [0, 1, 1, 0]);
 
   // Connection line animation
@@ -92,16 +81,12 @@ const HowItWorks = () => {
       ref={sectionRef}
       className="py-24 relative overflow-hidden font-vazir"
       style={{
-        background:
-          "linear-gradient(135deg, #f5f7ff 0%, #f0f4ff 50%, #eef2ff 100%)",
+        background: "linear-gradient(135deg, #f8faff 0%, #f0f4ff 100%)",
       }}
-      dir={`${
-        isRTL ? "rtl" : "ltr"
-      }`}
+      dir={isRTL ? "rtl" : "ltr"}
     >
-      {/* Background elements */}
-      <div className="absolute inset-0 overflow-hidden">
-        {/* Subtle grid pattern */}
+      {/* Subtle background pattern */}
+      <div className="absolute inset-0 opacity-30">
         <div
           className="absolute inset-0"
           style={{
@@ -110,32 +95,6 @@ const HowItWorks = () => {
             backgroundSize: "30px 30px",
           }}
         />
-
-        {/* Floating shapes */}
-        {[...Array(3)].map((_, i) => (
-          <motion.div
-            key={i}
-            className="absolute rounded-full opacity-20"
-            style={{
-              width: Math.random() * 300 + 200,
-              height: Math.random() * 300 + 200,
-              top: `${Math.random() * 100}%`,
-              left: `${Math.random() * 100}%`,
-              background: `radial-gradient(circle, rgba(79, 70, 229, 0.1) 0%, rgba(79, 70, 229, 0.05) 50%, transparent 70%)`,
-              filter: "blur(50px)",
-            }}
-            animate={{
-              x: [0, Math.random() * 40 - 20],
-              y: [0, Math.random() * 40 - 20],
-              scale: [1, Math.random() * 0.1 + 0.95, 1],
-            }}
-            transition={{
-              duration: Math.random() * 10 + 15,
-              repeat: Infinity,
-              repeatType: "reverse",
-            }}
-          />
-        ))}
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
@@ -144,23 +103,23 @@ const HowItWorks = () => {
             className="text-4xl md:text-5xl font-bold mb-4 inline-block bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-purple-600"
             initial={{ opacity: 0, y: 20 }}
             animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-            transition={{ duration: 0.7 }}
+            transition={{ duration: 0.6 }}
           >
             {t("howItWorks.title")}
           </motion.h2>
           <motion.div
-            className="h-1.5 w-24 bg-gradient-to-r from-indigo-600 to-purple-600 mx-auto my-6 rounded-full"
+            className="h-1 w-20 bg-gradient-to-r from-indigo-600 to-purple-600 mx-auto my-6 rounded-full"
             initial={{ width: 0, opacity: 0 }}
             animate={
-              isInView ? { width: 96, opacity: 1 } : { width: 0, opacity: 0 }
+              isInView ? { width: 80, opacity: 1 } : { width: 0, opacity: 0 }
             }
-            transition={{ duration: 0.7, delay: 0.2 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
           />
           <motion.p
             className="text-xl text-gray-600 max-w-3xl mx-auto"
             initial={{ opacity: 0, y: 20 }}
             animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-            transition={{ duration: 0.7, delay: 0.4 }}
+            transition={{ duration: 0.6, delay: 0.3 }}
           >
             {t("howItWorks.subtitle")}
           </motion.p>
@@ -178,7 +137,7 @@ const HowItWorks = () => {
               <motion.path
                 d={isRTL ? "M100,5 L0,5" : "M0,5 L100,5"}
                 stroke="url(#gradient)"
-                strokeWidth="3"
+                strokeWidth="2"
                 strokeLinecap="round"
                 fill="none"
                 initial={{ pathLength: 0 }}
@@ -193,326 +152,189 @@ const HowItWorks = () => {
               </defs>
             </svg>
 
-            {/* Animated dots on the path */}
+            {/* Animated dots on the path - optimized to use CSS where possible */}
             <motion.div
-              className="absolute top-0 left-0 w-3 h-3 rounded-full bg-indigo-500"
-              style={{ marginTop: "-5px" }}
+              className="absolute top-0 left-0 w-2 h-2 rounded-full bg-indigo-500"
+              style={{ marginTop: "-4px" }}
               animate={{
                 left: isRTL ? ["100%", "0%"] : ["0%", "100%"],
-                scale: [1, 1.5, 1],
               }}
               transition={{
                 duration: 4,
                 repeat: Infinity,
                 repeatType: "loop",
                 ease: "easeInOut",
-                times: [0, 0.5, 1],
-              }}
-            />
-            <motion.div
-              className="absolute top-0 left-0 w-2 h-2 rounded-full bg-purple-500"
-              style={{ marginTop: "-3px" }}
-              animate={{
-                left: isRTL ? ["100%", "0%"] : ["0%", "100%"],
-              }}
-              transition={{
-                duration: 5,
-                repeat: Infinity,
-                repeatType: "loop",
-                ease: "easeInOut",
-                delay: 1,
               }}
             />
           </div>
 
-          <div className="flex flex-col md:flex-row justify-between items-center gap-16 md:gap-8">
+          <div className="flex flex-col md:flex-row justify-between items-start gap-16 md:gap-8">
             {steps.map((step, index) => (
-              <motion.div
-                key={index}
-                className="flex-1 relative"
-                initial={{ opacity: 0, y: 50 }}
-                animate={
-                  isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 50 }
-                }
-                transition={{ duration: 0.7, delay: index * 0.2 }}
-                onHoverStart={() => setActiveStep(index)}
-                onHoverEnd={() => setActiveStep(null)}
-              >
-                {/* Step number indicator */}
-                <motion.div
-                  className={`absolute -top-6 ${
-                    isRTL ? "-left-6" : "-right-6"
-                  } w-12 h-12 rounded-full flex items-center justify-center text-lg font-bold text-white z-10`}
-                  style={{
-                    background: `linear-gradient(135deg, ${step.color
-                      .replace("from-", "")
-                      .replace("to-", "")})`,
-                    boxShadow: `0 10px 25px -5px ${
-                      index === 0
-                        ? "rgba(79, 70, 229, 0.3)"
-                        : index === 1
-                        ? "rgba(139, 92, 246, 0.3)"
-                        : "rgba(168, 85, 247, 0.3)"
-                    }`,
-                  }}
-                  animate={{
-                    scale: activeStep === index ? 1.1 : 1,
-                    boxShadow:
-                      activeStep === index
-                        ? `0 15px 30px -5px ${
-                            index === 0
-                              ? "rgba(79, 70, 229, 0.4)"
-                              : index === 1
-                              ? "rgba(139, 92, 246, 0.4)"
-                              : "rgba(168, 85, 247, 0.4)"
-                          }`
-                        : `0 10px 25px -5px ${
-                            index === 0
-                              ? "rgba(79, 70, 229, 0.3)"
-                              : index === 1
-                              ? "rgba(139, 92, 246, 0.3)"
-                              : "rgba(168, 85, 247, 0.3)"
-                          }`,
-                  }}
-                  transition={{ duration: 0.3 }}
-                >
-                  {step.number}
-                </motion.div>
-
-                {/* Main card with glass effect */}
-                <motion.div
-                  className="bg-white/80 backdrop-blur-lg rounded-2xl p-8 text-center relative overflow-hidden"
-                  style={{
-                    boxShadow:
-                      activeStep === index
-                        ? `0 20px 40px -10px ${
-                            index === 0
-                              ? "rgba(79, 70, 229, 0.2)"
-                              : index === 1
-                              ? "rgba(139, 92, 246, 0.2)"
-                              : "rgba(168, 85, 247, 0.2)"
-                          }, inset 0 0 0 1px rgba(255, 255, 255, 0.7)`
-                        : `0 10px 30px -15px rgba(0, 0, 0, 0.1), inset 0 0 0 1px rgba(255, 255, 255, 0.5)`,
-                  }}
-                  animate={{
-                    y: activeStep === index ? -8 : 0,
-                  }}
-                  transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                >
-                  {/* Background gradient that appears on hover */}
-                  <motion.div
-                    className={`absolute inset-0 bg-gradient-to-br ${step.lightColor} opacity-0`}
-                    animate={{ opacity: activeStep === index ? 0.3 : 0 }}
-                    transition={{ duration: 0.3 }}
-                  />
-
-                  {/* Icon with animated container */}
-                  <motion.div
-                    className={`w-20 h-20 rounded-2xl bg-gradient-to-br ${step.color} flex items-center justify-center text-3xl text-white mx-auto mb-6`}
-                    animate={{
-                      scale: activeStep === index ? 1.1 : 1,
-                      rotate: activeStep === index ? 5 : 0,
-                      boxShadow:
-                        activeStep === index
-                          ? `0 15px 30px -10px ${
-                              index === 0
-                                ? "rgba(79, 70, 229, 0.4)"
-                                : index === 1
-                                ? "rgba(139, 92, 246, 0.4)"
-                                : "rgba(168, 85, 247, 0.4)"
-                            }`
-                          : `0 10px 20px -10px ${
-                              index === 0
-                                ? "rgba(79, 70, 229, 0.3)"
-                                : index === 1
-                                ? "rgba(139, 92, 246, 0.3)"
-                                : "rgba(168, 85, 247, 0.3)"
-                            }`,
-                    }}
-                    transition={{
-                      type: "spring",
-                      stiffness: 300,
-                      damping: 15,
+              <div key={index} className="flex-1 relative">
+                {/* This wrapper div prevents layout shifts */}
+                <div className="relative pt-4 pb-8">
+                  {/* Step number indicator - no animation on hover */}
+                  <div
+                    className={`absolute -top-4 ${
+                      isRTL ? "-right-4" : "-left-4"
+                    } w-10 h-10 rounded-full flex items-center justify-center text-lg font-bold text-blue-400 z-10`}
+                    style={{
+                      background: `linear-gradient(135deg, ${step.color
+                        .replace("from-", "")
+                        .replace("to-", "")})`,
+                      boxShadow: `0 8px 20px -5px rgba(${parseInt(
+                        step.accentColor.slice(1, 3),
+                        16
+                      )}, ${parseInt(
+                        step.accentColor.slice(3, 5),
+                        16
+                      )}, ${parseInt(step.accentColor.slice(5, 7), 16)}, 0.3)`,
                     }}
                   >
-                    {step.icon}
+                    {step.number}
+                  </div>
 
-                    {/* Animated rings around icon */}
+                  {/* Main card with isolated hover effects */}
+                  <motion.div
+                    className="bg-white rounded-xl p-6 text-center relative overflow-hidden"
+                    style={{
+                      boxShadow: "0 10px 30px -15px rgba(0, 0, 0, 0.1)",
+                    }}
+                    initial={{ opacity: 0, y: 30 }}
+                    animate={
+                      isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }
+                    }
+                    transition={{ duration: 0.6, delay: index * 0.2 }}
+                    whileHover={{
+                      y: -8,
+                      boxShadow: `0 20px 40px -15px rgba(${parseInt(
+                        step.accentColor.slice(1, 3),
+                        16
+                      )}, ${parseInt(
+                        step.accentColor.slice(3, 5),
+                        16
+                      )}, ${parseInt(step.accentColor.slice(5, 7), 16)}, 0.2)`,
+                      transition: {
+                        type: "spring",
+                        stiffness: 300,
+                        damping: 20,
+                      },
+                    }}
+                    onHoverStart={() => setActiveStep(index)}
+                    onHoverEnd={() => setActiveStep(null)}
+                  >
+                    {/* Subtle background gradient */}
+                    {activeStep === index && (
+                      <motion.div
+                        className={`absolute inset-0 bg-gradient-to-br ${step.lightColor}`}
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 0.2 }}
+                        exit={{ opacity: 0 }}
+                        transition={{ duration: 0.3 }}
+                      />
+                    )}
+
+                    {/* Icon with animated container */}
+                    <div
+                      className={`w-16 h-16 rounded-xl bg-gradient-to-br ${step.color} flex items-center justify-center text-2xl text-white mx-auto mb-5`}
+                      style={{
+                        boxShadow: `0 8px 20px -5px rgba(${parseInt(
+                          step.accentColor.slice(1, 3),
+                          16
+                        )}, ${parseInt(
+                          step.accentColor.slice(3, 5),
+                          16
+                        )}, ${parseInt(
+                          step.accentColor.slice(5, 7),
+                          16
+                        )}, 0.2)`,
+                      }}
+                    >
+                      {step.icon}
+                    </div>
+
+                    {/* Title with gradient on hover */}
+                    <h3
+                      className="text-xl font-bold mb-3"
+                      style={{
+                        color: activeStep === index ? "transparent" : "#1F2937",
+                        backgroundImage:
+                          activeStep === index
+                            ? `linear-gradient(to right, ${step.color
+                                .replace("from-", "")
+                                .replace("to-", "")})`
+                            : "none",
+                        backgroundClip:
+                          activeStep === index ? "text" : "border-box",
+                      }}
+                    >
+                      {step.title}
+                    </h3>
+
+                    {/* Description */}
+                    <p className="text-gray-600">{step.description}</p>
+
+                    {/* Learn more button that appears on hover */}
                     <AnimatePresence>
                       {activeStep === index && (
                         <motion.div
-                          className="absolute inset-0 rounded-2xl border-2 border-white/30"
-                          initial={{ opacity: 0, scale: 0.8 }}
-                          animate={{ opacity: 1, scale: 1 }}
-                          exit={{ opacity: 0, scale: 1.2 }}
-                          transition={{ duration: 0.5 }}
+                          className="mt-5 flex items-center justify-center"
+                          initial={{ opacity: 0, y: 10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: 10 }}
+                          transition={{ duration: 0.3 }}
+                        >
+                          <motion.button
+                            className={`px-4 py-2 rounded-full text-sm font-medium text-white bg-gradient-to-r ${step.color} flex items-center`}
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
+                          >
+                            <span className={isRTL ? "ml-2" : "mr-2"}>
+                              {t("howItWorks.viewSample")}
+                            </span>
+                            {isRTL ? (
+                              <FaArrowRight className="text-xs rotate-180" />
+                            ) : (
+                              <FaArrowRight className="text-xs" />
+                            )}
+                          </motion.button>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+
+                    {/* Accent line at bottom */}
+                    <AnimatePresence>
+                      {activeStep === index && (
+                        <motion.div
+                          className={`h-0.5 bg-gradient-to-r ${
+                            step.color
+                          } absolute bottom-0 ${
+                            isRTL ? "right-0" : "left-0"
+                          } rounded-full`}
+                          initial={{ width: 0 }}
+                          animate={{ width: "100%" }}
+                          exit={{ width: 0 }}
+                          transition={{ duration: 0.3 }}
                         />
                       )}
                     </AnimatePresence>
                   </motion.div>
-
-                  {/* Title with gradient on hover */}
-                  <motion.h3
-                    className="text-xl font-bold mb-3"
-                    style={{
-                      color: activeStep === index ? "transparent" : "#1F2937",
-                      backgroundImage:
-                        activeStep === index
-                          ? `linear-gradient(to right, ${step.color
-                              .replace("from-", "")
-                              .replace("to-", "")})`
-                          : "none",
-                      backgroundClip:
-                        activeStep === index ? "text" : "border-box",
-                    }}
-                  >
-                    {step.title}
-                  </motion.h3>
-
-                  {/* Description with animated opacity */}
-                  <motion.p
-                    className="text-gray-600"
-                    animate={{
-                      color: activeStep === index ? "#4B5563" : "#6B7280",
-                    }}
-                  >
-                    {step.description}
-                  </motion.p>
-
-                  {/* Learn more button that appears on hover */}
-                  <AnimatePresence>
-                    {activeStep === index && (
-                      <motion.div
-                        className="mt-6 flex items-center justify-center"
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: 10 }}
-                        transition={{ duration: 0.3 }}
-                      >
-                        <motion.button
-                          className={`px-4 py-2 rounded-full text-sm font-medium text-white bg-gradient-to-r ${step.color} flex items-center`}
-                          whileHover={{ scale: 1.05 }}
-                          whileTap={{ scale: 0.95 }}
-                        >
-                          <span className={isRTL ? "ml-2" : "mr-2"}>
-                            {t("howItWorks.viewSample")}
-                          </span>
-                          {isRTL ? (
-                            <FaArrowRight className="text-xs rotate-180" />
-                          ) : (
-                            <FaArrowRight className="text-xs" />
-                          )}
-                        </motion.button>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-
-                  {/* Decorative corner elements */}
-                  <motion.div
-                    className={`absolute top-0 ${
-                      isRTL ? "left-0" : "right-0"
-                    } w-12 h-12 pointer-events-none`}
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: activeStep === index ? 0.1 : 0 }}
-                    transition={{ duration: 0.3 }}
-                    style={{ transform: isRTL ? "scaleX(-1)" : "none" }}
-                  >
-                    <svg
-                      width="48"
-                      height="48"
-                      viewBox="0 0 48 48"
-                      fill="none"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        d="M0 0L48 48V12C48 5.37258 42.6274 0 36 0H0Z"
-                        className={`fill-current ${
-                          index === 0
-                            ? "text-blue-500"
-                            : index === 1
-                            ? "text-purple-500"
-                            : "text-indigo-500"
-                        }`}
-                      />
-                    </svg>
-                  </motion.div>
-                  <motion.div
-                    className={`absolute bottom-0 ${
-                      isRTL ? "right-0" : "left-0"
-                    } w-12 h-12 pointer-events-none rotate-180`}
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: activeStep === index ? 0.1 : 0 }}
-                    transition={{ duration: 0.3 }}
-                    style={{
-                      transform: isRTL
-                        ? "scaleX(-1) rotate(180deg)"
-                        : "rotate(180deg)",
-                    }}
-                  >
-                    <svg
-                      width="48"
-                      height="48"
-                      viewBox="0 0 48 48"
-                      fill="none"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        d="M0 0L48 48V12C48 5.37258 42.6274 0 36 0H0Z"
-                        className={`fill-current ${
-                          index === 0
-                            ? "text-blue-500"
-                            : index === 1
-                            ? "text-purple-500"
-                            : "text-indigo-500"
-                        }`}
-                      />
-                    </svg>
-                  </motion.div>
-                </motion.div>
-
-                {/* Decorative elements */}
-                <motion.div
-                  className={`absolute -z-10 rounded-full w-24 h-24 -top-6 ${
-                    isRTL ? "-left-6" : "-right-6"
-                  } opacity-0`}
-                  style={{
-                    background: `radial-gradient(circle, ${
-                      index === 0
-                        ? "rgba(79, 70, 229, 0.15)"
-                        : index === 1
-                        ? "rgba(139, 92, 246, 0.15)"
-                        : "rgba(168, 85, 247, 0.15)"
-                    } 0%, transparent 70%)`,
-                    filter: "blur(20px)",
-                  }}
-                  animate={{
-                    opacity: activeStep === index ? 1 : 0,
-                    scale: activeStep === index ? [1, 1.2, 1] : 1,
-                  }}
-                  transition={{
-                    opacity: { duration: 0.3 },
-                    scale: {
-                      duration: 3,
-                      repeat: Infinity,
-                      repeatType: "reverse",
-                    },
-                  }}
-                />
-              </motion.div>
+                </div>
+              </div>
             ))}
           </div>
         </div>
 
-        {/* Demo video section */}
+        {/* Demo video section - improved design */}
         <motion.div
           className="mt-24 text-center"
           initial={{ opacity: 0, y: 30 }}
           animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
-          transition={{ duration: 0.7, delay: 0.8 }}
+          transition={{ duration: 0.6, delay: 0.6 }}
         >
           <motion.div
-            className="relative max-w-4xl mx-auto rounded-2xl overflow-hidden shadow-2xl"
-            whileHover={{ scale: 1.02 }}
+            className="relative max-w-4xl mx-auto rounded-xl overflow-hidden shadow-lg"
+            whileHover={{ scale: 1.01 }}
             transition={{ type: "spring", stiffness: 400, damping: 20 }}
           >
             {/* Video thumbnail with play button */}
@@ -540,16 +362,16 @@ const HowItWorks = () => {
                 transition={{ duration: 0.3 }}
               >
                 <motion.div
-                  className="w-20 h-20 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center group-hover:bg-white/30 transition-all duration-300"
+                  className="w-16 h-16 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center group-hover:bg-white/30 transition-all duration-300"
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.95 }}
                 >
                   <motion.div
-                    className="w-16 h-16 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white"
+                    className="w-12 h-12 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white"
                     animate={{
                       boxShadow: [
                         "0 0 0 0 rgba(99, 102, 241, 0)",
-                        "0 0 0 15px rgba(99, 102, 241, 0)",
+                        "0 0 0 10px rgba(99, 102, 241, 0)",
                       ],
                     }}
                     transition={{
@@ -559,7 +381,7 @@ const HowItWorks = () => {
                     }}
                   >
                     <FaPlay
-                      className={`text-xl ${
+                      className={`text-lg ${
                         isRTL ? "rotate-180 mr-1" : "ml-1"
                       }`}
                     />
@@ -597,69 +419,68 @@ const HowItWorks = () => {
               )}
             </div>
 
-            {/* Video controls */}
-            <motion.div
-              className="absolute bottom-0 left-0 right-0 h-1 bg-gray-200"
-              initial={{ scaleX: 0 }}
-              animate={{ scaleX: videoPlaying ? 1 : 0 }}
-              transition={{ duration: videoPlaying ? 30 : 0, ease: "linear" }}
-              style={{ transformOrigin: isRTL ? "right" : "left" }}
-            >
+            {/* Video progress bar - simplified for better performance */}
+            {videoPlaying && (
               <motion.div
-                className="h-full bg-gradient-to-r from-indigo-500 to-purple-500"
-                style={{ width: "100%" }}
-              />
-            </motion.div>
+                className="absolute bottom-0 left-0 right-0 h-1 bg-gray-200"
+                initial={{ scaleX: 0 }}
+                animate={{ scaleX: 1 }}
+                transition={{ duration: 30, ease: "linear" }}
+                style={{ transformOrigin: isRTL ? "right" : "left" }}
+              >
+                <div className="h-full bg-gradient-to-r from-indigo-500 to-purple-500" />
+              </motion.div>
+            )}
           </motion.div>
         </motion.div>
 
-        {/* Call to action */}
+        {/* Call to action - simplified and optimized */}
         <motion.div
           className="mt-16 text-center"
           initial={{ opacity: 0, y: 20 }}
           animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-          transition={{ duration: 0.7, delay: 1 }}
+          transition={{ duration: 0.6, delay: 0.8 }}
         >
           <motion.button
-            className="px-8 py-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-bold rounded-full shadow-lg relative overflow-hidden group"
+            className="px-8 py-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-bold rounded-full shadow-md relative overflow-hidden group"
             whileHover={{
-              scale: 1.05,
-              boxShadow: "0 15px 30px -5px rgba(79, 70, 229, 0.4)",
+              scale: 1.03,
+              boxShadow: "0 10px 25px -5px rgba(79, 70, 229, 0.4)",
             }}
-            whileTap={{ scale: 0.95 }}
+            whileTap={{ scale: 0.98 }}
           >
+            <span className="relative z-10">{t("howItWorks.startNow")}</span>
             <motion.span
               className="absolute inset-0 bg-white opacity-0 group-hover:opacity-20 transition-opacity duration-300"
               initial={{ x: isRTL ? "100%" : "-100%" }}
               whileHover={{ x: isRTL ? "-100%" : "100%" }}
               transition={{ duration: 1, ease: "easeInOut" }}
             />
-            {t("howItWorks.startNow")}
           </motion.button>
         </motion.div>
       </div>
 
-      {/* Floating particles - Fixed to avoid window reference error */}
+      {/* Optimized floating particles - only render when component is mounted */}
       {isMounted && (
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          {[...Array(15)].map((_, i) => (
+          {[...Array(6)].map((_, i) => (
             <motion.div
               key={`particle-${i}`}
               className="absolute rounded-full bg-indigo-500"
               style={{
-                width: Math.random() * 4 + 1,
-                height: Math.random() * 4 + 1,
-                x: Math.random() * windowSize.width,
-                y: Math.random() * windowSize.height,
-                opacity: Math.random() * 0.3 + 0.1,
+                width: Math.random() * 3 + 1,
+                height: Math.random() * 3 + 1,
+                left: `${Math.random() * 100}%`,
+                top: `${Math.random() * 100}%`,
+                opacity: Math.random() * 0.2 + 0.1,
               }}
               animate={{
-                y: [0, -Math.random() * 400 - 100],
-                opacity: [0, 0.3, 0],
+                y: [0, -Math.random() * 200 - 50],
+                opacity: [0, 0.2, 0],
                 scale: [0, 1, 0.5],
               }}
               transition={{
-                duration: Math.random() * 20 + 10,
+                duration: Math.random() * 10 + 10,
                 repeat: Infinity,
                 repeatType: "loop",
                 delay: Math.random() * 5,

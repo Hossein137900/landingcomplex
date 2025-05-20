@@ -34,7 +34,7 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-light" dir="rtl">
+    <div className="min-h-screen" dir="rtl">
       <Hero />
       <Features />
       <HowItWorks />

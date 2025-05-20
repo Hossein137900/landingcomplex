@@ -1,6 +1,6 @@
 "use client";
 import { motion, AnimatePresence } from "framer-motion";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import {
   FaRocket,
@@ -22,12 +22,30 @@ import {
 import { Language, useLanguage } from "@/context/languageContext";
 
 const Navbar = () => {
-  const { language, setLanguage, direction, t , isRTL } = useLanguage();
+  const { language, setLanguage, direction, t, isRTL } = useLanguage();
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [activeSection, setActiveSection] = useState("home");
   const [hoveredItem, setHoveredItem] = useState<string | null>(null);
   const [langMenuOpen, setLangMenuOpen] = useState(false);
+  const langButtonRef = useRef<HTMLButtonElement>(null);
+  const [isMobile, setIsMobile] = useState(false);
+
+  // Add this useEffect to handle responsive behavior
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+
+    // Initial check
+    checkMobile();
+
+    // Add event listener for window resize
+    window.addEventListener("resize", checkMobile);
+
+    // Cleanup
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
 
   // Handle scroll event to change navbar appearance
   useEffect(() => {
@@ -127,7 +145,7 @@ const Navbar = () => {
   return (
     <>
       <motion.nav
-        className={`fixed w-full z-50 font-vazir transition-all duration-300 ${
+        className={`fixed w-full z-50 transition-all duration-300 ${
           scrolled ? "py-2" : "py-4"
         }`}
         initial={{ y: -100 }}
@@ -141,9 +159,7 @@ const Navbar = () => {
       >
         <div
           className={`${
-            scrolled
-              ? "backdrop-blur-md bg-white/70 shadow-lg"
-              : "backdrop-blur-sm bg-white/30"
+            scrolled ? "backdrop-blur-md" : "backdrop-blur-sm bg-white/10"
           } border-b border-white/20 transition-all duration-300`}
         >
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -238,6 +254,7 @@ const Navbar = () => {
                 {/* Language Switcher */}
                 <div className="relative group">
                   <motion.button
+                    ref={langButtonRef}
                     className="lang-button flex items-center justify-center p-2.5 rounded-full bg-gradient-to-r from-white/80 to-white/60 backdrop-blur-md text-primary hover:bg-primary/10 focus:outline-none transition-colors border border-primary/10 shadow-sm"
                     onClick={() => setLangMenuOpen(!langMenuOpen)}
                     whileHover={{
@@ -298,7 +315,11 @@ const Navbar = () => {
                   <AnimatePresence>
                     {langMenuOpen && (
                       <motion.div
-                        className="lang-menu absolute top-full mt-2 right-0 bg-white/95 backdrop-blur-xl rounded-xl shadow-lg py-2 min-w-[220px] border border-indigo-100/50 z-50 overflow-hidden"
+                        className={`lang-menu bg-white/90 backdrop-blur-xl rounded-xl shadow-lg py-2 min-w-[220px] border border-indigo-100/50 z-50 overflow-hidden ${
+                          isMobile
+                            ? "fixed top-54 left-1/2 -translate-x-1/2 -translate-y-1/2"
+                            : "absolute top-full mt-2 right-0"
+                        }`}
                         initial={{ opacity: 0, y: -10, scale: 0.95 }}
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         exit={{ opacity: 0, y: -10, scale: 0.95 }}
@@ -525,24 +546,6 @@ const Navbar = () => {
                       <span className="relative z-10">
                         {t("nav.getStarted")}
                       </span>
-                      <motion.span
-                        className={`absolute ${
-                          direction === "rtl" ? "left-3" : "right-3"
-                        } opacity-0 group-hover:opacity-100 transition-opacity duration-300 relative z-10`}
-                        animate={{
-                          x: direction === "rtl" ? [0, -5, 0] : [0, 5, 0],
-                        }}
-                        transition={{
-                          duration: 1.5,
-                          repeat: Infinity,
-                        }}
-                      >
-                        {direction === "rtl" ? (
-                          <FaArrowLeft className="h-4 w-4" />
-                        ) : (
-                          <FaArrowRight className="h-4 w-4" />
-                        )}
-                      </motion.span>
                     </button>
                   </motion.div>
                 </div>
@@ -619,9 +622,7 @@ const Navbar = () => {
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
                 transition={{ duration: 0.3 }}
-                dir={`${
-        isRTL ? "rtl" : "ltr"
-      }`}
+                dir={`${isRTL ? "rtl" : "ltr"}`}
               >
                 <motion.div
                   className="absolute inset-0 bg-gradient-to-b from-indigo-600/20 to-purple-700/20 backdrop-blur-lg"
@@ -711,7 +712,9 @@ const Navbar = () => {
                               activeSection === item.id
                                 ? "bg-white/20"
                                 : "bg-white/10"
-                            } flex items-center justify-center ${isRTL ? "ml-3" : "mr-3"} `}
+                            } flex items-center justify-center ${
+                              isRTL ? "ml-3" : "mr-3"
+                            } `}
                             whileHover={{ scale: 1.1, rotate: 5 }}
                             whileTap={{ scale: 0.9 }}
                           >
@@ -721,7 +724,9 @@ const Navbar = () => {
 
                           {activeSection === item.id && (
                             <motion.div
-                              className={` ${isRTL ? "mr-auto" : "ml-auto"}   w-6 h-6 rounded-full bg-white/20 flex items-center justify-center`}
+                              className={` ${
+                                isRTL ? "mr-auto" : "ml-auto"
+                              }   w-6 h-6 rounded-full bg-white/20 flex items-center justify-center`}
                               initial={{ scale: 0 }}
                               animate={{ scale: 1 }}
                               transition={{
